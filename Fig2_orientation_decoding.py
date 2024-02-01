@@ -1,5 +1,5 @@
 #%% 
-# This script produces the results shown in Figure 2 of Wolff and Rademaker (2024)
+# This script produces the results shown in Figure 2 in Wolff and Rademaker (2024)
 # reduced data from Wolff et al. 2015, 2017 and 2020, used in this script, and precomputed results from all datasets is available at https://osf.io/bdf74/
 # data used by Harrison et al. 2023 is publicly available at https://osf.io/5ba9y/
 
