@@ -1,4 +1,8 @@
 #%% 
+# This script produces the results shown in Figure 2 of Wolff and Rademaker (2024)
+# reduced data from Wolff et al. 2015, 2017 and 2020, used in this script, and precomputed results from all datasets is available at https://osf.io/bdf74/
+# data used by Harrison et al. 2023 is publicly available at https://osf.io/5ba9y/
+
 import scipy.io as sio
 import numpy as np
 from custom_functions import dat_prep_4d_section,dist_theta_kfold,circ_dist,circ_mean
@@ -12,27 +16,22 @@ import mat73
 from scipy.stats import circstd
 from mne.stats import permutation_t_test
 
-# reduced data for Wolff et al. 2015, 2017 and 2020
-# and precomputed results for all datasets is available at https://osf.io/bdf74/
-# data used by Harrison et al. 2023 is publicly available at https://osf.io/5ba9y/
-
 dat_dir='' # to data for decoding
-dat_dir_out='' # directory to save results or load results from 
+results_dir='' # directory to save results or load results from 
 fig_dir_out='' # directory to save figures to
+save_fig=True # save figures as .svg
 
-do_decoding_H=False # decode the data from Harrison et al. 2023
-do_decoding_W15=False # decode the data from Wolff et al. 2015
-do_decoding_W17=False # decode the data from Wolff et al. 2017
-do_decoding_W20=False # decode the data from Wolff et al. 2020
+do_decoding_H=True # decode the data from Harrison et al. 2023
+do_decoding_W15=True # decode the data from Wolff et al. 2015
+do_decoding_W17=True # decode the data from Wolff et al. 2017
+do_decoding_W20=True# decode the data from Wolff et al. 2020
 
 # variables that are consistent across experiments
 toi=np.asarray([.05, .45]) # time window of interest
-ang_steps=8 # number of times to shif the orientations bins when decoding
+ang_steps=8 # number of times to shift the orientations bins when decoding
 n_reps=20 # number of repetitions for the decoder (with random folds each time)
 n_folds=8 # number of folds 
-
 #%% Decode orientation from Harrison et al. 2023
-# data is publicly available at https://osf.io/5ba9y/ from the original authors
 if do_decoding_H:
     # posterior channels to include 
     post_chans = [ 'P7','P5','P3','P1','Pz','P2','P4','P6','P8','PO7','PO3','POz','PO4','PO8','O2','O1','Oz','Iz','P10','P9']
@@ -71,7 +70,7 @@ if do_decoding_H:
         orient_4d_dists.append(distances_ordered)
         thetas.append(theta)
 
-    with open(dat_dir_out+'/Orient_dec_4d_Harrison23.pickle','wb') as f:
+    with open(results_dir+'/Orient_dec_4d_Harrison23.pickle','wb') as f:
         pickle.dump([orient_4d_dec,orient_4d_dists,thetas,angspace_full],f)
 
 #%% Decode orientation from Wolff et al. 2015
@@ -117,7 +116,7 @@ if do_decoding_W15:
         orient_4d_dists.append(distances_ordered)
         thetas.append(theta)
 
-    with open(dat_dir_out+'/Orient_dec_4d_Wolff15.pickle','wb') as f:
+    with open(results_dir+'/Orient_dec_4d_Wolff15.pickle','wb') as f:
         pickle.dump([orient_4d_dec,orient_4d_dists,thetas,angspace_full],f) 
 
 #%% Decode orientation from Wolff et al. 2017    
@@ -169,7 +168,7 @@ if do_decoding_W17:
         orient_right_4d_dists.append(distances_ordered)
         thetas_right.append(theta_right)
 
-    with open(dat_dir_out+'/Orient_dec_4d_Wolff17.pickle','wb') as f:
+    with open(results_dir+'/Orient_dec_4d_Wolff17.pickle','wb') as f:
         pickle.dump([orient_left_4d_dec,orient_left_4d_dists,thetas_left,orient_right_4d_dec,orient_right_4d_dists,thetas_right,angspace_full],f) 
 
 #%% Decode orientation from Wolff et al. 2020
@@ -221,7 +220,7 @@ if do_decoding_W20:
         orient_right_4d_dists.append(distances_ordered)
         thetas_right.append(theta_right)
 
-    with open(dat_dir_out+'/Orient_dec_4d_Wolff20.pickle','wb') as f:
+    with open(results_dir+'/Orient_dec_4d_Wolff20.pickle','wb') as f:
         pickle.dump([orient_left_4d_dec,orient_left_4d_dists,thetas_left,orient_right_4d_dec,orient_right_4d_dists,thetas_right,angspace_full],f) 
 
 #%% load in results from all experimentsand plot them
@@ -237,16 +236,16 @@ ang_bins_deg=np.round(np.rad2deg(np.reshape(ang_bins,(ang_bins.shape[0]*ang_bins
 
 for iexp in range(4):
     if iexp==0:
-        with open(dat_dir_out+'/Orient_dec_4d_Harrison23.pickle','rb') as f:
+        with open(results_dir+'/Orient_dec_4d_Harrison23.pickle','rb') as f:
             orient_4d_dec,orient_4d_dists,thetas,angspace_full=pickle.load(f)  
     elif iexp==1:
-        with open(dat_dir_out+'/Orient_dec_4d_Wolff15.pickle','rb') as f:
+        with open(results_dir+'/Orient_dec_4d_Wolff15.pickle','rb') as f:
             orient_4d_dec,orient_4d_dists,thetas,angspace_full=pickle.load(f)
     elif iexp==2:
-        with open(dat_dir_out+'/Orient_dec_4d_Wolff17.pickle','rb') as f:
+        with open(results_dir+'/Orient_dec_4d_Wolff17.pickle','rb') as f:
             orient_left_4d_dec,orient_left_4d_dists,thetas_left,orient_right_4d_dec,orient_right_4d_dists,thetas_right,angspace_full=pickle.load(f)
     elif iexp==3:
-        with open(dat_dir_out+'/Orient_dec_4d_Wolff20.pickle','rb') as f:
+        with open(results_dir+'/Orient_dec_4d_Wolff20.pickle','rb') as f:
             orient_left_4d_dec,orient_left_4d_dists,thetas_left,orient_right_4d_dec,orient_right_4d_dists,thetas_right,angspace_full=pickle.load(f)
     
     # combine left and right orientations for Wolff et al. 2017 and 2020
@@ -539,7 +538,6 @@ for iexp in range(4):
         plt.annotate('*',xy=(0,np.min(dir_horz_vert_diff)-3.5),xycoords='data',fontsize=20,verticalalignment='center',horizontalalignment='center')
     plt.ylabel('horizontal minus vertical')
 
-    fig_dir_out='/cs/home/wolffmj/Wolff2023/Cardinal_SNR_perception/figures'
     if iexp==0:
         fig_name='/Orient_dec_4d_Harrison23'
     elif iexp==1:
@@ -550,7 +548,8 @@ for iexp in range(4):
         fig_name='/Orient_dec_4d_Wolff20'
 
     # # save figure as .svg
-    plt.savefig(fig_dir_out+fig_name+ '.svg',dpi=300,bbox_inches='tight')
+    if save_fig:
+        plt.savefig(fig_dir_out+fig_name+ '.svg',dpi=300,bbox_inches='tight')
 
     # plt.show()
 
