@@ -1,0 +1,8 @@
+cff-version: 1.1.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: Wolff
+  given-names: Michael J.
+title:Code for "Model mimicry limits conclusions about neural tuning and can mistakenly imply unlikely priors (2025)"
+version: v1.0
+date-released: 2025-05-21
